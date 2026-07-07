@@ -179,7 +179,7 @@ async function login(){
 
     try{
 
-        const res=await fetch("http://localhost:3000/login",{
+        const res=await fetch("https://testpost-xnlw.onrender.com/login",{
             method:"POST",
             headers:{
                 "Content-Type":"application/json"
@@ -216,7 +216,7 @@ async function login(){
 
 async function logout(){
 
-    await fetch("http://localhost:3000/logout",{
+    await fetch("https://testpost-xnlw.onrender.com/logou",{
         method:"POST",
         credentials:"include"
     });
@@ -254,7 +254,7 @@ async function check(){
 
     try{
 
-        const res=await fetch("http://localhost:3000/api/check",{
+        const res=await fetch("https://testpost-xnlw.onrender.com/api/check",{
             method:"POST",
             headers:{
                 "Content-Type":"application/json"

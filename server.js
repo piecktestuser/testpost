@@ -386,11 +386,11 @@ app.post("/api/check", async (req, res) => {
 // Server
 // ================================
 
-app.listen(3000, () => {
+const PORT = process.env.PORT || 3000;
 
+app.listen(PORT, () => {
     console.log("======================================");
     console.log("MIS Food Card Server");
-    console.log("http://localhost:3000");
+    console.log(`Running on port ${PORT}`);
     console.log("======================================");
-
 });
