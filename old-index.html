@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>เช็กยอดเงินบัตรนักเรียน</title>
+
+<style>
+
+body{
+    font-family: Arial, sans-serif;
+    background:#f5f5f5;
+    padding:40px;
+}
+
+.container{
+    max-width:600px;
+    margin:auto;
+}
+
+h2{
+    margin-bottom:20px;
+}
+
+.input-group{
+    display:flex;
+    gap:10px;
+}
+
+input{
+    flex:1;
+    padding:12px;
+    font-size:18px;
+}
+
+button{
+    padding:12px 20px;
+    font-size:18px;
+    cursor:pointer;
+}
+
+.card{
+    background:white;
+    border-radius:10px;
+    padding:20px;
+    margin-top:20px;
+    box-shadow:0 2px 8px rgba(0,0,0,.1);
+}
+
+.row{
+    margin-bottom:12px;
+    font-size:18px;
+}
+
+.label{
+    font-weight:bold;
+}
+
+.balance{
+    color:green;
+    font-size:28px;
+    font-weight:bold;
+}
+
+.error{
+    color:red;
+    margin-top:15px;
+}
+
+.loading{
+    color:blue;
+}
+
+</style>
+
+</head>
+<body>
+
+<div class="container">
+
+    <h2>เช็กยอดเงินบัตรนักเรียน</h2>
+
+    <div class="input-group">
+
+        <input
+            id="card"
+            placeholder="กรอกรหัสนักเรียน (08388) หรือ รหัสบัตร (d7d1401f)"
+            autocomplete="off"
+        >
+
+        <button onclick="check()">
+            เช็ก
+        </button>
+
+    </div>
+
+    <div id="status"></div>
+
+    <div class="card">
+
+        <div class="row">
+            <span class="label">ชื่อ :</span>
+            <span id="name">-</span>
+        </div>
+
+        <div class="row">
+            <span class="label">รหัสนักเรียน :</span>
+            <span id="studentID">-</span>
+        </div>
+
+        <div class="row">
+            <span class="label">รหัสบัตร :</span>
+            <span id="cardNo">-</span>
+        </div>
+
+        <div class="row">
+            <span class="label">ยอดคงเหลือ :</span>
+            <span id="balance" class="balance">-</span>
+            บาท
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+const input = document.getElementById("card");
+
+input.addEventListener("keypress", function(e){
+
+    if(e.key === "Enter"){
+        check();
+    }
+
+});
+
+async function check(){
+
+    const value = input.value.trim();
+
+    if(!value){
+
+        alert("กรุณากรอกข้อมูล");
+
+        return;
+
+    }
+
+    const status = document.getElementById("status");
+
+    status.innerHTML =
+        '<div class="loading">กำลังค้นหา...</div>';
+
+    try{
+
+        const res = await fetch(
+            "http://localhost:3000/api/check",
+            {
+                method:"POST",
+
+                headers:{
+                    "Content-Type":"application/json"
+                },
+
+                body:JSON.stringify({
+                    cardNo:value
+                })
+            }
+        );
+
+        const data = await res.json();
+
+        console.log(data);
+
+        if(!data.success){
+
+            status.innerHTML =
+                `<div class="error">${data.message}</div>`;
+
+            return;
+
+        }
+
+        document.getElementById("name").textContent =
+            data.name || "-";
+
+        document.getElementById("studentID").textContent =
+            data.studentID || "-";
+
+        document.getElementById("cardNo").textContent =
+            data.cardNo || "-";
+
+        document.getElementById("balance").textContent =
+            data.balance || "0";
+
+        status.innerHTML = "";
+
+    }
+
+    catch(err){
+
+        console.error(err);
+
+        status.innerHTML =
+            `<div class="error">${err.message}</div>`;
+
+    }
+
+}
+
+</script>
+
+</body>
+</html>
